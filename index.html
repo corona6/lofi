@@ -1,1 +1,177 @@
-<audio controls src="f947909c-6b19-4683-bdc6-173fb2f5fd29.mp3"></audio>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lofi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-image: url("7d2e7e31-8ca9-4cb6-9269-db74351a001e.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .player-container {
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 15rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .control-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            transition: background-color 0.2s;
+        }
+
+        .control-button:hover {
+            background-color: #f3f4f6;
+        }
+
+        .control-button svg {
+            width: 2rem;
+            height: 2rem;
+            stroke: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <div class="controls">
+            <button id="play-btn" class="control-button">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </button>
+            <button id="next-btn" class="control-button">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <audio id="audio-player"></audio>
+
+    <script>
+        const songs = [
+            "a/b7222248-3caa-f9b0-a52b-097e9c99c612.mp3",
+            "a/ecc1e7c2-df33-5b16-76df-39d1d863522b.mp3",
+            "a/2a9a212c-1b78-9fe6-ca6c-15932a6103d5.mp3",
+            "a/47155004-97f1-5664-9d7f-6fef2549df17.mp3",
+            "a/75403cc4-6c90-aa45-806d-d7eedf558286.mp3",
+            "a/c9594aaf-7476-5f74-0ecc-1d30cdb71ff5.mp3",
+            "a/61b4226a-f925-8dff-65cd-20038737cbad.mp3",
+            "a/cd7b2b74-a83b-4509-b421-972981cbbf86.mp3",
+            "a/acab4eeb-e044-503e-965e-c8fcb62a0a46.mp3",
+            "a/a044fc63-b4f0-ab88-4fc6-a1895b21a33f.mp3",
+            "a/137b673c-99ae-93f2-02b0-c5ce064cb620.mp3",
+            "a/f032f662-7ca3-fa19-7bf9-039600cdcecf.mp3",
+            "a/9e6270c9-606a-ad4a-9127-6461f189a498.mp3",
+            "a/749e1b89-86e2-690f-5637-eee37a9e1ba8.mp3",
+            "a/b70ab5e4-1c03-186c-9053-77bd858b925f.mp3",
+            "a/1d50ed6b-5f31-6445-a682-0a6ae38307f9.mp3",
+            "a/b846a402-06cb-4cf7-75de-0fe3c26dff8f.mp3",
+            "a/981e6099-df3b-fb11-6686-6108d460f9e6.wav",
+            "a/9deb2d1c-1e90-e5e3-fde8-5cd164a249c4.mp3",
+            "a/5f964db4-30e9-0678-d87f-f5ee4c4263b4.mp3"
+        ];
+
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let isShuffled = false;
+        let shuffledPlaylist = [...songs];
+
+        const audioPlayer = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        function shufflePlaylist() {
+            isShuffled = !isShuffled;
+            
+            if (isShuffled) {
+                shuffledPlaylist = [...songs]
+                    .map(value => ({ value, sort: Math.random() }))
+                    .sort((a, b) => a.sort - b.sort)
+                    .map(({ value }) => value);
+                currentSongIndex = 0;
+            }
+
+            const song = shuffledPlaylist[currentSongIndex];            
+            audioPlayer.src = song;
+        }
+
+        function playSong(index) {
+            const currentList = isShuffled ? shuffledPlaylist : songs;
+            currentSongIndex = index;
+            const song = currentList[currentSongIndex];
+            
+            audioPlayer.src = song;
+            audioPlayer.play();
+            isPlaying = true;
+            updatePlayButton();
+        }
+
+        function updatePlayButton() {
+            playBtn.innerHTML = isPlaying 
+                ? `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                   </svg>`
+                : `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                   </svg>`;
+        }
+
+        playBtn.onclick = () => {
+            if (isPlaying) {
+                audioPlayer.pause();
+            } else {
+                audioPlayer.play();
+            }
+            isPlaying = !isPlaying;
+            updatePlayButton();
+        };
+
+        nextBtn.onclick = () => {
+            const currentList = isShuffled ? shuffledPlaylist : songs;
+            currentSongIndex = (currentSongIndex + 1) % currentList.length;
+            playSong(currentSongIndex);
+        };
+
+        audioPlayer.onended = () => {
+            const currentList = isShuffled ? shuffledPlaylist : songs;
+            currentSongIndex = (currentSongIndex + 1) % currentList.length;
+            playSong(currentSongIndex);
+        };
+
+        shufflePlaylist();
+    </script>
+</body>
+</html>
